@@ -1,6 +1,8 @@
+from units_converters import *
 from bs4 import BeautifulSoup as bs
 import requests
 import re
+
 
 def get_google_forecast(region, output_units={"temp": "c", "speed": "kph"}):
     USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36"
@@ -32,20 +34,20 @@ def get_google_forecast(region, output_units={"temp": "c", "speed": "kph"}):
         data["wind"] = float(data["wind"].replace("km/h", ""))
 
         if output_units["speed"] == "mph":
-            data["wind"] = _convert_kph_to_mph(data["wind"])
+            data["wind"] = convert_kph_to_mph(data["wind"])
 
         if output_units["temp"] == "f":
-            data["temp"] = _convert_c_to_f(data["temp"])
+            data["temp"] = convert_c_to_f(data["temp"])
 
         input_units = "metric"
     else:
         data["wind"] = float(data["wind"].replace("mph", ""))
 
         if output_units["speed"] == "kph":
-            data["wind"] = _convert_mph_to_kph(data["wind"])
+            data["wind"] = convert_mph_to_kph(data["wind"])
 
         if output_units["temp"] == "c":
-            data["temp"] = _convert_f_to_c(data["temp"])
+            data["temp"] = convert_f_to_c(data["temp"])
 
         input_units = "imperial"
 
@@ -94,4 +96,3 @@ def get_google_forecast(region, output_units={"temp": "c", "speed": "kph"}):
 
 if __name__ == "__main__":
     print(get_google_forecast("curitiba"))
-
