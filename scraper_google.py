@@ -1,7 +1,28 @@
-from units_converters import *
 from bs4 import BeautifulSoup as bs
+from pprint import pprint
 import requests
 import re
+
+"""
+This code is heavily based on Dniamir's work
+https://github.com/dniamir/GoogleWeather
+"""
+
+
+def _convert_mph_to_kph(mph):
+    return round(mph * 1.6, 1)
+
+
+def _convert_kph_to_mph(mph):
+    return round(mph / 1.6, 1)
+
+
+def _convert_f_to_c(f):
+    return round((f - 32) * (5 / 9), 1)
+
+
+def _convert_c_to_f(c):
+    return round(c * (9 / 5) + 32, 1)
 
 
 def get_google_forecast(region, output_units={"temp": "c", "speed": "kph"}):
@@ -21,9 +42,11 @@ def get_google_forecast(region, output_units={"temp": "c", "speed": "kph"}):
     data = {}
     data["region"] = soup.find("div", attrs={"id": "wob_loc"}).text
     data["temp"] = float(soup.find("span", attrs={"id": "wob_tm"}).text)
-    data["dayhour"] = soup.find("div", attrs={"id": "wob_dts"}).text
+    data["datetime"] = soup.find("div", attrs={"id": "wob_dts"}).text
     data["weather_now"] = soup.find("span", attrs={"id": "wob_dc"}).text
-    data["precipitation"] = soup.find("span", attrs={"id": "wob_pp"}).text
+    data["precip"] = float(
+        soup.find("span", attrs={"id": "wob_pp"}).text.replace("%", "")
+    )
     data["humidity"] = float(
         soup.find("span", attrs={"id": "wob_hm"}).text.replace("%", "")
     )
@@ -34,20 +57,20 @@ def get_google_forecast(region, output_units={"temp": "c", "speed": "kph"}):
         data["wind"] = float(data["wind"].replace("km/h", ""))
 
         if output_units["speed"] == "mph":
-            data["wind"] = convert_kph_to_mph(data["wind"])
+            data["wind"] = _convert_kph_to_mph(data["wind"])
 
         if output_units["temp"] == "f":
-            data["temp"] = convert_c_to_f(data["temp"])
+            data["temp"] = _convert_c_to_f(data["temp"])
 
         input_units = "metric"
     else:
         data["wind"] = float(data["wind"].replace("mph", ""))
 
         if output_units["speed"] == "kph":
-            data["wind"] = convert_mph_to_kph(data["wind"])
+            data["wind"] = _convert_mph_to_kph(data["wind"])
 
         if output_units["temp"] == "c":
-            data["temp"] = convert_f_to_c(data["temp"])
+            data["temp"] = _convert_f_to_c(data["temp"])
 
         input_units = "imperial"
 
@@ -68,7 +91,7 @@ def get_google_forecast(region, output_units={"temp": "c", "speed": "kph"}):
 
         next_days.append(
             {
-                "name": day_name,
+                "day": day_name,
                 "weather": weather,
                 "max_temp": max_temp,
                 "min_temp": min_temp,
@@ -85,14 +108,43 @@ def get_google_forecast(region, output_units={"temp": "c", "speed": "kph"}):
         r"([0-9]+)% (\w+-*\w*),* ([0-9:]+\s*\w*)", precip
     )
 
+    # Convert values from strings to numbers
+    for idx, _ in enumerate(data["curves"]["precip"]):
+        data["curves"]["precip"][idx] = list(data["curves"]["precip"][idx])
+        data["curves"]["precip"][idx][0] = float(data["curves"]["precip"][idx][0])
+
     wind = str(soup.find("div", attrs={"id": "wob_wg", "class": "wob_noe"}))
     data["curves"]["wind"] = re.findall(
         r'"(\d+ [\w\/]+) \w+ (\w+) (\w+-*\w*),* ([0-9:]+\s*\w*)" class="wob_t" style="display:inline;text-align:right">\d+ [\w\/]+<\/span><span aria-label="\d+ [\w\/]+ \w+-*\w*,* [0-9:]+\s*\w*" class="wob_t" style="display:none;text-align:right">\d+ [\w\/]+<\/span><\/div><div style="-webkit-box-flex:1"><\/div><img alt="\d+ [\w\/]+ \w+ \w+" aria-hidden="true" src="\/\/ssl.gstatic.com\/m\/images\/weather\/\w+.\w+" style="transform-origin:\d+% \d+%;transform:rotate\(\d+\w+\)',
         wind,
     )
 
+    # Convert wind speed units if necessary
+    for idx, _ in enumerate(data["curves"]["wind"]):
+        data["curves"]["wind"][idx] = list(data["curves"]["wind"][idx])
+
+        if "km/h" in data["curves"]["wind"][idx][0]:
+            data["curves"]["wind"][idx][0] = float(
+                data["curves"]["wind"][idx][0].replace(" km/h", "")
+            )
+
+            if output_units["speed"] == "mph":
+                data["curves"]["wind"][idx][0] = _convert_kph_to_mph(
+                    data["curves"]["wind"][idx][0]
+                )
+
+        else:
+            data["curves"]["wind"][idx][0] = float(
+                data["curves"]["wind"][idx][0].replace(" mph", "")
+            )
+
+            if output_units["speed"] == "kph":
+                data["curves"]["wind"][idx][0] = _convert_mph_to_kph(
+                    data["curves"]["wind"][idx][0]
+                )
+
     return data
 
 
 if __name__ == "__main__":
-    print(get_google_forecast("curitiba"))
+    pprint(get_google_forecast("curitiba"))
