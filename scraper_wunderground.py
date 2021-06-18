@@ -2,7 +2,6 @@
 
 from bs4 import BeautifulSoup as bs
 import requests
-import schedule
 import boto3
 import time
 import yaml
@@ -11,7 +10,7 @@ USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Ge
 LANGUAGE = "en-US,en;q=0.5"
 URL = "https://www.wunderground.com/dashboard/pws/"
 
-CONFIG_PATH = "config.yaml"
+CONFIG_PATH = "/home/lfhohmann/gcp-weather-and-forecast-scraper/config.yaml"
 DB_TABLE = "wunderground_pws"
 
 

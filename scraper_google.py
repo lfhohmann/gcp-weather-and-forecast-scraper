@@ -2,7 +2,6 @@
 
 from bs4 import BeautifulSoup as bs
 import requests
-import schedule
 import boto3
 import time
 import yaml
@@ -17,7 +16,7 @@ USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTM
 LANGUAGE = "en-US,en;q=0.5"
 URL = "https://www.google.com/search?lr=lang_en&ie=UTF-8&q=weather"
 
-CONFIG_PATH = "config.yaml"
+CONFIG_PATH = "/home/lfhohmann/gcp-weather-and-forecast-scraper/config.yaml"
 DB_TABLE = "google_forecast"
 
 
