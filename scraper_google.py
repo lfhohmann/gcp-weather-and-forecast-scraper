@@ -50,9 +50,11 @@ def get_google_forecast(region, output_units={"temp": "c", "speed": "kph"}):
 
     Args:
         region (string): The desired city name or region name for the forecast
-        output_units (dict, optional): The desired output units. "temp" can be either "c", for Celsius, or "f" for Farenheit.
-                                       And "speed" refers to "wind_speed", cen be either "kph" for Kilometers per Hour or "mph"
-                                       for Miles per Hour. Defaults to {"temp": "c", "speed": "kph"}.
+        output_units (dict, optional): The desired output units. "temp" can be either "c", for Celsius, or "f", for Farenheit.
+                                       And "speed" refers to "wind_speed" units, cen be either "kph", for Kilometers per Hour,
+                                       or "mph", for Miles per Hour.
+                                       
+                                       Defaults to {"temp": "c", "speed": "kph"}.
 
     Returns:
         dict: A dictionary is returned with all values from Google Weather Forecast web page.

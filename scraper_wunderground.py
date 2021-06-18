@@ -13,18 +13,22 @@ DB_TABLE = "wunderground_pws"
 
 
 def _convert_inches_to_hpa(inches):
+    # Converts Inches of Mercury to Hectopascal
     return round(inches * 33.86, 2)
 
 
 def _convert_inches_to_mm(inches):
+    # Converts Inches of Mercury to Milimeters of Mercury
     return round(inches * 25.4, 2)
 
 
 def _convert_mph_to_kph(mph):
+    # Converts Miles per Hour to Kilometers per Hour
     return round(mph * 1.6, 1)
 
 
 def _convert_f_to_c(f):
+    # Converts Farenheit to Celsius
     return round((f - 32) * (5 / 9), 1)
 
 
@@ -32,7 +36,27 @@ def get_wunderground_data(
     station,
     output_units={"temp": "c", "pressure": "hpa", "speed": "kph", "precip": "mm"},
 ):
+    """ Function to scrape data from Wunderground Personal Weather Station web page 
+        without API key.
+
+    Args:
+        station (dict): A dictionary containing the "station_id" and a list of the desired values to be 
+                        extracted under the "parameters" key.
+        output_units (dict, optional): A dictionary with the desired output units. "temp" can be either "c", for 
+                                       Celsius, or "f", for Farenheit. "pressure" can be "hpa",for HectoPascal, "mm",
+                                       for Milimeters of Mercury or "inches", forInches of Mercury. "speed" refers to
+                                       "wind_speed" and "wind_gust"units, can be either "kph", for Kilometers per 
+                                       Hour, or "mph", forMiles per Hour. And "precip" refers to "precip_rate" and 
+                                       "precip_total" units, can be either "mm", for Milimeters, or "inches" for 
+                                       Inches.
+
+                                       Defaults to {"temp": "c", "pressure": "hpa", "speed": "kph", "precip": "mm"}.
+
+    Returns:
+        [type]: [description]
+    """
     try:
+        # Read data from URL
         session = requests.Session()
         session.headers["User-Agent"] = USER_AGENT
         session.headers["Accept-Language"] = LANGUAGE
@@ -40,12 +64,14 @@ def get_wunderground_data(
         html = session.get(f"{URL}{station['id']}")
         soup = bs(html.text, "html.parser")
 
+        # Store data in dictionary
         data = {}
 
         if (
             soup.findAll("span", attrs={"_ngcontent-app-root-c173": ""})[21].text
             == "Online"
         ):
+            # Only extract data if station is online
 
             # Last updated value
             data["last_updated"] = soup.findAll(
