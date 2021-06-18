@@ -1,82 +1,81 @@
-wunderground_stations:
-- id: ICURITIB15
-  parameters:
-      - temp
-      - wind_speed
-      - wind_gust
-      - wind_bearing
-      - pressure
-      - humidity
-      - precip_rate
-      - precip_total
-- id: ICURITIB41
-  parameters:
-      - temp
-      - wind_speed
-      - wind_gust
-      - wind_bearing
-      - pressure
-      - humidity
-      - precip_rate
-      - precip_total
-      - uv_index
-      - radiation
-- id: ICURITIB24
-  parameters:
-      - temp
-      - wind_speed
-      - wind_gust
-      - wind_bearing
-      - pressure
-      - humidity
-      - precip_rate
-      - precip_total
-      - uv_index
-      - radiation
-- id: ICURITIB28
-  parameters:
-      - temp
-      - wind_speed
-      - wind_gust
-      - wind_bearing
-      - pressure
-      - humidity
-      - precip_rate
-      - precip_total
-      - uv_index
-      - radiation
-- id: ICURITIB29
-  parameters:
-      - temp
-      - wind_speed
-      - wind_gust
-      - wind_bearing
-      - humidity
-      - precip_rate
-      - precip_total
-      - radiation
-- id: IPRCURIT2
-  parameters:
-      - temp
-      - wind_speed
-      - wind_gust
-      - wind_bearing
-      - pressure
-      - humidity
-      - precip_rate
-      - precip_total
-- id: IPRCURIT10
-  parameters:
-      - temp
-      - wind_speed
-      - wind_gust
-      - wind_bearing
-      - pressure
-      - humidity
-      - precip_rate
-      - precip_total
-      - uv_index
-      - radiation
-
 google_forecast:
   region: curitiba
+wunderground_stations:
+  - id: ICURITIB15
+    parameters:
+        - temp
+        - wind_speed
+        - wind_gust
+        - wind_bearing
+        - pressure
+        - humidity
+        - precip_rate
+        - precip_total
+  - id: ICURITIB41
+    parameters:
+        - temp
+        - wind_speed
+        - wind_gust
+        - wind_bearing
+        - pressure
+        - humidity
+        - precip_rate
+        - precip_total
+        - uv_index
+        - radiation
+  - id: ICURITIB24
+    parameters:
+        - temp
+        - wind_speed
+        - wind_gust
+        - wind_bearing
+        - pressure
+        - humidity
+        - precip_rate
+        - precip_total
+        - uv_index
+        - radiation
+  - id: ICURITIB28
+    parameters:
+        - temp
+        - wind_speed
+        - wind_gust
+        - wind_bearing
+        - pressure
+        - humidity
+        - precip_rate
+        - precip_total
+        - uv_index
+        - radiation
+  - id: ICURITIB29
+    parameters:
+        - temp
+        - wind_speed
+        - wind_gust
+        - wind_bearing
+        - humidity
+        - precip_rate
+        - precip_total
+        - radiation
+  - id: IPRCURIT2
+    parameters:
+        - temp
+        - wind_speed
+        - wind_gust
+        - wind_bearing
+        - pressure
+        - humidity
+        - precip_rate
+        - precip_total
+  - id: IPRCURIT10
+    parameters:
+        - temp
+        - wind_speed
+        - wind_gust
+        - wind_bearing
+        - pressure
+        - humidity
+        - precip_rate
+        - precip_total
+        - uv_index
+        - radiation
