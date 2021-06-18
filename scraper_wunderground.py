@@ -3,6 +3,7 @@
 from bs4 import BeautifulSoup as bs
 from pprint import pprint
 import requests
+import boto3
 
 
 def _convert_inches_to_hpa(inches):
@@ -165,6 +166,33 @@ def get_wunderground_data(
         return {}
 
 
+def dynamoDB_put(data):
+    if "temp" in data:
+        data["temp"] = round(data["temp"] * 10)
+
+    if "wind_speed" in data:
+        data["wind_speed"] = round(data["wind_speed"] * 10)
+
+    if "wind_gust" in data:
+        data["wind_gust"] = round(data["wind_gust"] * 10)
+
+    if "pressure" in data:
+        data["pressure"] = round(data["pressure"] * 100)
+
+    if "precip_rate" in data:
+        data["precip_rate"] = round(data["precip_rate"] * 100)
+
+    if "precip_total" in data:
+        data["precip_total"] = round(data["precip_total"] * 100)
+
+    if "radiation" in data:
+        data["radiation"] = round(data["radiation"] * 10)
+
+    dynamodb = boto3.resource("dynamodb")
+    table = dynamodb.Table("wunderground_pws")
+    return table.put_item(Item=data)
+
+
 if __name__ == "__main__":
     station = {}
     station["id"] = "ICURITIB28"
@@ -181,4 +209,11 @@ if __name__ == "__main__":
         "radiation",
     ]
 
-    pprint(get_wunderground_data(station))
+    data = get_wunderground_data(station)
+
+    data["station_id"] = "ICURITIB28"
+    data["timestamp"] = 1234567891
+
+    print(dynamoDB_put(data))
+
+    pprint(data)
