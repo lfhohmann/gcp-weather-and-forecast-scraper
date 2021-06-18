@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import enum
 from bs4 import BeautifulSoup as bs
 from pprint import pprint
 import requests
@@ -155,7 +156,46 @@ def get_google_forecast(region, output_units={"temp": "c", "speed": "kph"}):
         return {}
 
 
+def dynamoDB_put(data):
+
+    # Convert values to ints, because DynamoDB does not support floats
+    if "temp" in data:
+        data["temp"] = round(data["temp"] * 10)
+
+    if "humidity" in data:
+        data["humidity"] = round(data["humidity"] * 10)
+
+    if "wind" in data:
+        data["wind"] = round(data["wind"] * 10)
+
+    if "precip" in data:
+        data["precip"] = round(data["precip"] * 10)
+
+    for idx, _ in enumerate(data["next_days"]):
+        data["next_days"][idx]["min_temp"] = round(
+            data["next_days"][idx]["min_temp"] * 10
+        )
+        data["next_days"][idx]["max_temp"] = round(
+            data["next_days"][idx]["max_temp"] * 10
+        )
+
+    for idx, _ in enumerate(data["curves"]["precip"]):
+        data["curves"]["precip"][idx][0] = round(data["curves"]["precip"][idx][0] * 10)
+
+    for idx, _ in enumerate(data["curves"]["wind"]):
+        data["curves"]["wind"][idx][0] = round(data["curves"]["wind"][idx][0] * 10)
+
+    dynamodb = boto3.resource("dynamodb")
+    table = dynamodb.Table(DB_TABLE)
+
+    return table.put_item(Item=data)
+
+
 if __name__ == "__main__":
     data = get_google_forecast("curitiba")
+
+    data["timestamp"] = 1234567890
+
+    pprint(dynamoDB_put(data))
 
     pprint(data)
