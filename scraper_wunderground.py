@@ -5,6 +5,12 @@ from pprint import pprint
 import requests
 import boto3
 
+USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36"
+LANGUAGE = "en-US,en;q=0.5"
+URL = "https://www.wunderground.com/dashboard/pws/"
+
+DB_TABLE = "wunderground_pws"
+
 
 def _convert_inches_to_hpa(inches):
     return round(inches * 33.86, 2)
@@ -27,11 +33,6 @@ def get_wunderground_data(
     output_units={"temp": "c", "pressure": "hpa", "speed": "kph", "precip": "mm"},
 ):
     try:
-
-        USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36"
-        LANGUAGE = "en-US,en;q=0.5"
-        URL = "https://www.wunderground.com/dashboard/pws/"
-
         session = requests.Session()
         session.headers["User-Agent"] = USER_AGENT
         session.headers["Accept-Language"] = LANGUAGE
@@ -189,7 +190,7 @@ def dynamoDB_put(data):
         data["radiation"] = round(data["radiation"] * 10)
 
     dynamodb = boto3.resource("dynamodb")
-    table = dynamodb.Table("wunderground_pws")
+    table = dynamodb.Table(DB_TABLE)
     return table.put_item(Item=data)
 
 
@@ -214,6 +215,6 @@ if __name__ == "__main__":
     data["station_id"] = "ICURITIB28"
     data["timestamp"] = 1234567891
 
-    print(dynamoDB_put(data))
+    pprint(dynamoDB_put(data))
 
     pprint(data)
