@@ -201,6 +201,7 @@ if __name__ == "__main__":
     config = load_config("config.yaml")
 
     data = get_google_forecast(config["google_forecast"]["region"])
+    data["timestamp"] = time.time_ns()
 
     dynamoDB_put(data)
     # pprint(data)
