@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 from bs4 import BeautifulSoup as bs
-from pprint import pprint
 import requests
 import boto3
 import time
@@ -21,27 +20,43 @@ DB_TABLE = "google_forecast"
 
 
 def _convert_mph_to_kph(mph):
+    # Converts Miles per Hour to Kilometers per Hour
     return round(mph * 1.6, 1)
 
 
 def _convert_kph_to_mph(mph):
+    # Converts Kilometers per Hour to Miles per Hour
     return round(mph / 1.6, 1)
 
 
 def _convert_f_to_c(f):
+    # Converts Farenheit to Celsius
     return round((f - 32) * (5 / 9), 1)
 
 
 def _convert_c_to_f(c):
+    # Converts Celsius to Farenheit
     return round(c * (9 / 5) + 32, 1)
 
 
 def load_config(filepath):
+    # Loads YAML config file
     with open(filepath, "r") as f:
         return yaml.load(f, Loader=yaml.FullLoader)
 
 
 def get_google_forecast(region, output_units={"temp": "c", "speed": "kph"}):
+    """Function to scrape data from Google Weather Forecast web page.
+
+    Args:
+        region (string): The desired city name or region name for the forecast
+        output_units (dict, optional): The desired output units. "temp" can be either "c", for Celsius, or "f" for Farenheit.
+                                       And "speed" refers to "wind_speed", cen be either "kph" for Kilometers per Hour or "mph"
+                                       for Miles per Hour. Defaults to {"temp": "c", "speed": "kph"}.
+
+    Returns:
+        dict: A dictionary is returned with all values from Google Weather Forecast web page.
+    """
     try:
         # Read data from URL
         session = requests.Session()
@@ -116,6 +131,7 @@ def get_google_forecast(region, output_units={"temp": "c", "speed": "kph"}):
         # Store hourly data from precipitation probability and wind for the rest of the week
         data["curves"] = {}
 
+        # Extract precipitation probability from html code
         precip = str(soup.find("div", attrs={"id": "wob_pg", "class": "wob_noe"}))
         data["curves"]["precip"] = re.findall(
             r"([0-9]+)% (\w+-*\w*),* ([0-9:]+\s*\w*)", precip
@@ -126,6 +142,7 @@ def get_google_forecast(region, output_units={"temp": "c", "speed": "kph"}):
             data["curves"]["precip"][idx] = list(data["curves"]["precip"][idx])
             data["curves"]["precip"][idx][0] = float(data["curves"]["precip"][idx][0])
 
+        # Extract wind speed from html code
         wind = str(soup.find("div", attrs={"id": "wob_wg", "class": "wob_noe"}))
         data["curves"]["wind"] = re.findall(
             r'"(\d+ [\w\/]+) \w+ (\w+) (\w+-*\w*),* ([0-9:]+\s*\w*)" class="wob_t" style="display:inline;text-align:right">\d+ [\w\/]+<\/span><span aria-label="\d+ [\w\/]+ \w+-*\w*,* [0-9:]+\s*\w*" class="wob_t" style="display:none;text-align:right">\d+ [\w\/]+<\/span><\/div><div style="-webkit-box-flex:1"><\/div><img alt="\d+ [\w\/]+ \w+ \w+" aria-hidden="true" src="\/\/ssl.gstatic.com\/m\/images\/weather\/\w+.\w+" style="transform-origin:\d+% \d+%;transform:rotate\(\d+\w+\)',
@@ -201,7 +218,12 @@ if __name__ == "__main__":
     config = load_config("config.yaml")
 
     data = get_google_forecast(config["google_forecast"]["region"])
-    data["timestamp"] = time.time_ns()
 
-    dynamoDB_put(data)
-    # pprint(data)
+    if data:
+        # Only write to Database if returned data isn't empty
+        data["timestamp"] = time.time_ns()
+        dynamoDB_put(data)
+
+    else:
+        # TODO: Add logging when unable to retrieve weather data
+        pass
