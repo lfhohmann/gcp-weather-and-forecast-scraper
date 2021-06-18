@@ -168,6 +168,8 @@ def get_wunderground_data(
 
 
 def dynamoDB_put(data):
+
+    # Convert values to ints, because DynamoDB does not support floats
     if "temp" in data:
         data["temp"] = round(data["temp"] * 10)
 
@@ -191,6 +193,7 @@ def dynamoDB_put(data):
 
     dynamodb = boto3.resource("dynamodb")
     table = dynamodb.Table(DB_TABLE)
+
     return table.put_item(Item=data)
 
 
