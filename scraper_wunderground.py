@@ -238,7 +238,13 @@ if __name__ == "__main__":
         data = get_wunderground_data(station)
 
         if data:
+            # Only write to Database if returned data isn't empty
             data["station_id"] = station["id"]
             data["timestamp"] = time.time_ns()
 
             dynamoDB_put(data)
+
+            print(f"{time.time_ns()} - {station['id']} - Data retrieved and put in DB")
+
+        else:
+            print(f"{time.time_ns()} - Unable to retrieve data")

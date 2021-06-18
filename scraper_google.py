@@ -227,6 +227,7 @@ if __name__ == "__main__":
         data["timestamp"] = time.time_ns()
         dynamoDB_put(data)
 
+        print(f"{time.time_ns()} - Data retrieved and put in DB")
+
     else:
-        # TODO: Add logging when unable to retrieve weather data
-        pass
+        print(f"{time.time_ns()} - Unable to retrieve data")
