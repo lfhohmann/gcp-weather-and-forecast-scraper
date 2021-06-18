@@ -4,11 +4,13 @@ from bs4 import BeautifulSoup as bs
 from pprint import pprint
 import requests
 import boto3
+import yaml
 
 USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36"
 LANGUAGE = "en-US,en;q=0.5"
 URL = "https://www.wunderground.com/dashboard/pws/"
 
+CONFIG_PATH = "config.yaml"
 DB_TABLE = "wunderground_pws"
 
 
@@ -30,6 +32,12 @@ def _convert_mph_to_kph(mph):
 def _convert_f_to_c(f):
     # Converts Farenheit to Celsius
     return round((f - 32) * (5 / 9), 1)
+
+
+def load_config(filepath):
+    # Loads YAML config file
+    with open(filepath, "r") as f:
+        return yaml.load(f, Loader=yaml.FullLoader)
 
 
 def get_wunderground_data(

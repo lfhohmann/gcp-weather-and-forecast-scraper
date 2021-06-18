@@ -16,6 +16,7 @@ USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTM
 LANGUAGE = "en-US,en;q=0.5"
 URL = "https://www.google.com/search?lr=lang_en&ie=UTF-8&q=weather"
 
+CONFIG_PATH = "config.yaml"
 DB_TABLE = "google_forecast"
 
 
@@ -48,15 +49,15 @@ def load_config(filepath):
 def get_google_forecast(region, output_units={"temp": "c", "speed": "kph"}):
     """Function to scrape data from Google Weather Forecast web page.
 
-    Args:
+    ### Args:
         region (string): The desired city name or region name for the forecast
         output_units (dict, optional): The desired output units. "temp" can be either "c", for Celsius, or "f", for Farenheit.
                                        And "speed" refers to "wind_speed" units, cen be either "kph", for Kilometers per Hour,
                                        or "mph", for Miles per Hour.
-                                       
+
                                        Defaults to {"temp": "c", "speed": "kph"}.
 
-    Returns:
+    ### Returns:
         dict: A dictionary is returned with all values from Google Weather Forecast web page.
     """
     try:
@@ -217,7 +218,7 @@ def dynamoDB_put(data):
 
 
 if __name__ == "__main__":
-    config = load_config("config.yaml")
+    config = load_config(CONFIG_PATH)
 
     data = get_google_forecast(config["google_forecast"]["region"])
 
