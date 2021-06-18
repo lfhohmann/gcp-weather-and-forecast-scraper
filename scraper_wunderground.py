@@ -36,24 +36,24 @@ def get_wunderground_data(
     station,
     output_units={"temp": "c", "pressure": "hpa", "speed": "kph", "precip": "mm"},
 ):
-    """ Function to scrape data from Wunderground Personal Weather Station web page 
+    """Function to scrape data from Wunderground Personal Weather Station web page
         without API key.
 
-    Args:
-        station (dict): A dictionary containing the "station_id" and a list of the desired values to be 
+    ### Args:
+        station (dict): A dictionary containing the "station_id" and a list of the desired values to be
                         extracted under the "parameters" key.
-        output_units (dict, optional): A dictionary with the desired output units. "temp" can be either "c", for 
+        output_units (dict, optional): A dictionary with the desired output units. "temp" can be either "c", for
                                        Celsius, or "f", for Farenheit. "pressure" can be "hpa",for HectoPascal, "mm",
-                                       for Milimeters of Mercury or "inches", forInches of Mercury. "speed" refers to
-                                       "wind_speed" and "wind_gust"units, can be either "kph", for Kilometers per 
-                                       Hour, or "mph", forMiles per Hour. And "precip" refers to "precip_rate" and 
-                                       "precip_total" units, can be either "mm", for Milimeters, or "inches" for 
+                                       for Milimeters of Mercury or "inches", for Inches of Mercury. "speed" refers to
+                                       "wind_speed" and "wind_gust"units, can be either "kph", for Kilometers per
+                                       Hour, or "mph", for Miles per Hour. And "precip" refers to "precip_rate" and
+                                       "precip_total" units, can be either "mm", for Milimeters, or "inches" for
                                        Inches.
 
                                        Defaults to {"temp": "c", "pressure": "hpa", "speed": "kph", "precip": "mm"}.
 
-    Returns:
-        [type]: [description]
+    ### Returns:
+        dict: A dictionary is returned with all requested parameters from the chosen Wunderground PWS.
     """
     try:
         # Read data from URL
