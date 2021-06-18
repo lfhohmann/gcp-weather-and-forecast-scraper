@@ -247,4 +247,4 @@ if __name__ == "__main__":
             print(f"{time.time_ns()} - {station['id']} - Data retrieved and put in DB")
 
         else:
-            print(f"{time.time_ns()} - Unable to retrieve data")
+            print(f"{time.time_ns()} - {station['id']} - Unable to retrieve data")
