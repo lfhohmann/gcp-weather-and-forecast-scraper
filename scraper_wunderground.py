@@ -252,8 +252,9 @@ def main():
 
 
 if __name__ == "__main__":
-    schedule.every().minute.do(main)
-
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
+    main()
+    # schedule.every().minute.do(main)
+    #
+    # while True:
+    #     schedule.run_pending()
+    #     time.sleep(1)
