@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
 from bs4 import BeautifulSoup as bs
-from pprint import pprint
 import requests
 import boto3
+import time
 import yaml
 
 USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36"
@@ -232,26 +232,13 @@ def dynamoDB_put(data):
 
 
 if __name__ == "__main__":
-    station = {}
-    station["id"] = "ICURITIB28"
-    station["parameters"] = [
-        "temp",
-        "humidity",
-        "pressure",
-        "wind_speed",
-        "wind_gust",
-        "wind_bearing",
-        "precip_rate",
-        "precip_total",
-        "uv_index",
-        "radiation",
-    ]
+    config = load_config(CONFIG_PATH)
 
-    data = get_wunderground_data(station)
+    for station in config["wunderground_stations"]:
+        data = get_wunderground_data(station)
 
-    data["station_id"] = "ICURITIB28"
-    data["timestamp"] = 1234567891
+        if data:
+            data["station_id"] = station["id"]
+            data["timestamp"] = time.time_ns()
 
-    pprint(dynamoDB_put(data))
-
-    pprint(data)
+            dynamoDB_put(data)
