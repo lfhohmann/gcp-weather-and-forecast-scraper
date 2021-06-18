@@ -2,6 +2,7 @@
 
 from bs4 import BeautifulSoup as bs
 import requests
+import schedule
 import boto3
 import time
 import yaml
@@ -231,7 +232,7 @@ def dynamoDB_put(data):
     return table.put_item(Item=data)
 
 
-if __name__ == "__main__":
+def main():
     config = load_config(CONFIG_PATH)
 
     for station in config["wunderground_stations"]:
@@ -248,3 +249,11 @@ if __name__ == "__main__":
 
         else:
             print(f"{time.time_ns()} - {station['id']} - Unable to retrieve data")
+
+
+if __name__ == "__main__":
+    schedule.every().minute.do(main)
+
+    while True:
+        schedule.run_pending()
+        time.sleep(1)

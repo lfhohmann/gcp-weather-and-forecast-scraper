@@ -2,6 +2,7 @@
 
 from bs4 import BeautifulSoup as bs
 import requests
+import schedule
 import boto3
 import time
 import yaml
@@ -217,7 +218,7 @@ def dynamoDB_put(data):
     return table.put_item(Item=data)
 
 
-if __name__ == "__main__":
+def main():
     config = load_config(CONFIG_PATH)
 
     data = get_google_forecast(config["google_forecast"]["region"])
@@ -231,3 +232,11 @@ if __name__ == "__main__":
 
     else:
         print(f"{time.time_ns()} - Unable to retrieve data")
+
+
+if __name__ == "__main__":
+    schedule.every(30).minutes.do(main)
+
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
