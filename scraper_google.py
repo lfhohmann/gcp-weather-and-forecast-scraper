@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 
-import enum
 from bs4 import BeautifulSoup as bs
 from pprint import pprint
 import requests
 import boto3
+import time
+import yaml
 import re
 
 """
@@ -33,6 +34,11 @@ def _convert_f_to_c(f):
 
 def _convert_c_to_f(c):
     return round(c * (9 / 5) + 32, 1)
+
+
+def load_config(filepath):
+    with open(filepath, "r") as f:
+        return yaml.load(f, Loader=yaml.FullLoader)
 
 
 def get_google_forecast(region, output_units={"temp": "c", "speed": "kph"}):
@@ -192,10 +198,9 @@ def dynamoDB_put(data):
 
 
 if __name__ == "__main__":
-    data = get_google_forecast("curitiba")
+    config = load_config("config.yaml")
 
-    data["timestamp"] = 1234567890
+    data = get_google_forecast(config["google_forecast"]["region"])
 
-    pprint(dynamoDB_put(data))
-
-    pprint(data)
+    dynamoDB_put(data)
+    # pprint(data)
