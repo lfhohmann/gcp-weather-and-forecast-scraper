@@ -240,6 +240,9 @@ def dynamoDB_put(data):
     if "temp" in data:
         data["temp"] = round(data["temp"] * 10)
 
+    if "dew_point" in data:
+        data["dew_point"] = round(data["dew_point"] * 10)
+
     if "wind_speed" in data:
         data["wind_speed"] = round(data["wind_speed"] * 10)
 
