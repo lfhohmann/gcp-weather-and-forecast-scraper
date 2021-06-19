@@ -110,23 +110,39 @@ def get_wunderground_data(
                 else:
                     return None
 
+            # for idx, entry in enumerate(soup.findAll("span", attrs={"class": "wu-value"})):
+            #     print(f"{idx}\t{entry}")
+
             # Get Temperature
             if "temp" in station["parameters"]:
-                data["temp"] = soup.find("span", attrs={"class": "wu-value"})
-                data["temp"] = round(float(data["temp"].text), 1)
+                data["temp"] = soup.findAll("span", attrs={"class": "wu-value"})
+                data["temp"] = round(
+                    float(data["temp"][station["parameters"]["temp"]].text), 1
+                )
 
                 if output_units["temp"] == "c":
                     data["temp"] = _convert_f_to_c(data["temp"])
 
+            # Get Dew Point
+            if "dew_point" in station["parameters"]:
+                data["dew_point"] = soup.findAll("span", attrs={"class": "wu-value"})
+                data["dew_point"] = _convert_f_to_c(
+                    float(data["dew_point"][station["parameters"]["dew_point"]].text)
+                )
+
             # Get Humidity
             if "humidity" in station["parameters"]:
                 data["humidity"] = soup.findAll("span", attrs={"class": "wu-value"})
-                data["humidity"] = round(float(data["humidity"][7].text))
+                data["humidity"] = round(
+                    float(data["humidity"][station["parameters"]["humidity"]].text)
+                )
 
             # Get Pressure
             if "pressure" in station["parameters"]:
                 data["pressure"] = soup.findAll("span", attrs={"class": "wu-value"})
-                data["pressure"] = round(float(data["pressure"][6].text), 2)
+                data["pressure"] = round(
+                    float(data["pressure"][station["parameters"]["pressure"]].text), 2
+                )
 
                 if output_units["pressure"] == "hpa":
                     data["pressure"] = _convert_inches_to_hpa(data["pressure"])
@@ -134,7 +150,10 @@ def get_wunderground_data(
             # Get Wind Speed
             if "wind_speed" in station["parameters"]:
                 data["wind_speed"] = soup.findAll("span", attrs={"class": "wu-value"})
-                data["wind_speed"] = round(float(data["wind_speed"][2].text), 1)
+                data["wind_speed"] = round(
+                    float(data["wind_speed"][station["parameters"]["wind_speed"]].text),
+                    1,
+                )
 
                 if output_units["speed"] == "kph":
                     data["wind_speed"] = _convert_mph_to_kph(data["wind_speed"])
@@ -142,7 +161,9 @@ def get_wunderground_data(
             # Get Wind Gust
             if "wind_gust" in station["parameters"]:
                 data["wind_gust"] = soup.findAll("span", attrs={"class": "wu-value"})
-                data["wind_gust"] = round(float(data["wind_gust"][3].text), 1)
+                data["wind_gust"] = round(
+                    float(data["wind_gust"][station["parameters"]["wind_gust"]].text), 1
+                )
 
                 if output_units["speed"] == "kph":
                     data["wind_gust"] = _convert_mph_to_kph(data["wind_gust"])
@@ -165,7 +186,12 @@ def get_wunderground_data(
             # Get Precipitation Rate
             if "precip_rate" in station["parameters"]:
                 data["precip_rate"] = soup.findAll("span", attrs={"class": "wu-value"})
-                data["precip_rate"] = round(float(data["precip_rate"][5].text), 2)
+                data["precip_rate"] = round(
+                    float(
+                        data["precip_rate"][station["parameters"]["precip_rate"]].text
+                    ),
+                    2,
+                )
 
                 if output_units["precip"] == "mm":
                     data["precip_rate"] = _convert_inches_to_mm(data["precip_rate"])
@@ -173,7 +199,12 @@ def get_wunderground_data(
             # Get Precipitation Total
             if "precip_total" in station["parameters"]:
                 data["precip_total"] = soup.findAll("span", attrs={"class": "wu-value"})
-                data["precip_total"] = round(float(data["precip_total"][8].text), 2)
+                data["precip_total"] = round(
+                    float(
+                        data["precip_total"][station["parameters"]["precip_total"]].text
+                    ),
+                    2,
+                )
 
                 if output_units["precip"] == "mm":
                     data["precip_total"] = _convert_inches_to_mm(data["precip_total"])
@@ -181,7 +212,9 @@ def get_wunderground_data(
             # Get UV Index
             if "uv_index" in station["parameters"]:
                 data["uv_index"] = soup.findAll("span", attrs={"class": "wu-value"})
-                data["uv_index"] = round(float(data["uv_index"][9].text))
+                data["uv_index"] = round(
+                    float(data["uv_index"][station["parameters"]["uv_index"]].text)
+                )
 
             # Get Solar Radiation
             if "radiation" in station["parameters"]:
