@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import scraper_wunderground
 import boto3
 import yaml
