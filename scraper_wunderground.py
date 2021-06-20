@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 from bs4 import BeautifulSoup as bs
+from pprint import pprint
 import requests
-import boto3
-import time
 import yaml
 import re
 
@@ -11,7 +10,6 @@ LANGUAGE = "en-US,en;q=0.5"
 URL = "https://www.wunderground.com/dashboard/pws/"
 
 CONFIG_PATH = "/home/lfhohmann/gcp-weather-and-forecast-scraper/config.yaml"
-DB_TABLE = "wunderground_pws"
 
 REGEX_MAPPING = {
     "online": r"Online\(updated",
@@ -63,7 +61,7 @@ def load_config(filepath):
         return yaml.load(f, Loader=yaml.FullLoader)
 
 
-def get_wunderground_data(
+def get_data(
     station,
     output_units={"temp": "c", "pressure": "hpa", "speed": "kmph", "precip": "mm"},
 ):
@@ -205,63 +203,16 @@ def get_wunderground_data(
         return {}
 
 
-def dynamoDB_put(data):
-
-    # Convert values to ints, because DynamoDB does not support floats
-    if "temp" in data:
-        data["temp"] = round(data["temp"] * 10)
-
-    if "temp_feel" in data:
-        data["temp_feel"] = round(data["temp_feel"] * 10)
-
-    if "dew_point" in data:
-        data["dew_point"] = round(data["dew_point"] * 10)
-
-    if "humidity" in data:
-        data["humidity"] = round(data["humidity"])
-
-    if "wind_speed" in data:
-        data["wind_speed"] = round(data["wind_speed"] * 10)
-
-    if "wind_gust" in data:
-        data["wind_gust"] = round(data["wind_gust"] * 10)
-
-    if "wind_bearing" in data:
-        data["wind_bearing"] = round(data["wind_bearing"])
-
-    if "pressure" in data:
-        data["pressure"] = round(data["pressure"] * 100)
-
-    if "precip_rate" in data:
-        data["precip_rate"] = round(data["precip_rate"] * 100)
-
-    if "precip_total" in data:
-        data["precip_total"] = round(data["precip_total"] * 100)
-
-    if "radiation" in data:
-        data["radiation"] = round(data["radiation"] * 10)
-
-    dynamodb = boto3.resource("dynamodb")
-    table = dynamodb.Table(DB_TABLE)
-
-    return table.put_item(Item=data)
-
-
 if __name__ == "__main__":
     config = load_config(CONFIG_PATH)
 
     # Iterate over the list of stations present in the config.yaml file
     for station in config["wunderground_stations"]:
-        data = get_wunderground_data(station, config["units"])
+        data = get_data(station, config["units"])
 
         if data:
-            # Only write to Database if returned data isn't empty
-            data["station_id"] = station["id"]
-            data["timestamp"] = time.time_ns()
-
-            dynamoDB_put(data)
-
-            print(f"{time.time_ns()} - {station['id']} - Data retrieved and put in DB")
+            print(station["id"])
+            pprint(data)
 
         else:
-            print(f"{time.time_ns()} - {station['id']} - Unable to retrieve data")
+            print(f"{station['id']} - Unable to retrieve data")
