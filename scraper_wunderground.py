@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
 from bs4 import BeautifulSoup as bs
+from pprint import pprint
 import requests
 import boto3
 import time
 import yaml
+import re
 
 USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36"
 LANGUAGE = "en-US,en;q=0.5"
@@ -13,6 +15,24 @@ URL = "https://www.wunderground.com/dashboard/pws/"
 CONFIG_PATH = "/home/lfhohmann/gcp-weather-and-forecast-scraper/config.yaml"
 DB_TABLE = "wunderground_pws"
 
+REGEX_MAPPING = {
+    "online": r"Online\(updated",
+    "last_updated": r"Online\(updated\s(\d+)\s(\w+)\sago\)",
+    "temp": r"Current\sConditions\s([\d\.]+)",
+    "temp_feel": r"Feels\sLike\s([\d\.]+)",
+    "dew_point": r"DEWPOINT([\d\.]+)",
+    "humidity": r"HUMIDITY([\d\.]+)",
+    "pressure": r"PRESSURE([\d\.]+)",
+    "wind_speed": r"WIND\s&\sGUST\s([\d\.]+)\s.\s.\s[\d\.]+",
+    "wind_gust": r"WIND\s&\sGUST\s[\d\.]+\s.\s.\s([\d\.]+)",
+    "wind_direction": r"(\w+)\sWIND\s&\sGUST",
+    "wind_bearing": r"rotate\(([\d]+)deg\)",
+    "precip_rate": r"PRECIP\sRATE([\d\.]+)",
+    "precip_total": r"PRECIP\sACCUM([\d\.]+)",
+    "uv_index": r"UV([\d\.]+)",
+    "radiation": r"radiationCURRENT([\d\.]+) watts",
+}
+
 
 def _convert_inches_to_hpa(inches):
     # Converts Inches of Mercury to Hectopascal
@@ -20,13 +40,18 @@ def _convert_inches_to_hpa(inches):
 
 
 def _convert_inches_to_mm(inches):
-    # Converts Inches of Mercury to Milimeters of Mercury
+    # Converts Inches to Milimeters
     return round(inches * 25.4, 2)
 
 
-def _convert_mph_to_kph(mph):
+def _convert_mph_to_kmph(mph):
     # Converts Miles per Hour to Kilometers per Hour
     return round(mph * 1.6, 1)
+
+
+def _convert_mph_to_mps(mph):
+    # Converts Miles per Hour to Kilometers per Hour
+    return round(mph / 2.237, 1)
 
 
 def _convert_f_to_c(f):
@@ -42,27 +67,8 @@ def load_config(filepath):
 
 def get_wunderground_data(
     station,
-    output_units={"temp": "c", "pressure": "hpa", "speed": "kph", "precip": "mm"},
+    output_units={"temp": "c", "pressure": "hpa", "speed": "kmph", "precip": "mm"},
 ):
-    """Function to scrape data from Wunderground Personal Weather Station web page
-        without API key.
-
-    ### Args:
-        station (dict): A dictionary containing the "station_id" and a list of the desired values to be
-                        extracted under the "parameters" key.
-        output_units (dict, optional): A dictionary with the desired output units. "temp" can be either "c", for
-                                       Celsius, or "f", for Farenheit. "pressure" can be "hpa",for HectoPascal, "mm",
-                                       for Milimeters of Mercury or "inches", for Inches of Mercury. "speed" refers to
-                                       "wind_speed" and "wind_gust"units, can be either "kph", for Kilometers per
-                                       Hour, or "mph", for Miles per Hour. And "precip" refers to "precip_rate" and
-                                       "precip_total" units, can be either "mm", for Milimeters, or "inches" for
-                                       Inches.
-
-                                       Defaults to {"temp": "c", "pressure": "hpa", "speed": "kph", "precip": "mm"}.
-
-    ### Returns:
-        dict: A dictionary is returned with all requested parameters from the chosen Wunderground PWS.
-    """
     try:
         # Read data from URL
         session = requests.Session()
@@ -72,161 +78,109 @@ def get_wunderground_data(
         html = session.get(f"{URL}{station['id']}")
         soup = bs(html.text, "html.parser")
 
-        # Store data in dictionary
+        # Pull data from page
+        raw_data_list = soup.findAll("div")
+        raw_data_str = ""
+
+        # Make one long string to search with regex
+        for entry in raw_data_list:
+            raw_data_str += entry.text
+
         data = {}
 
-        if (
-            soup.findAll("span", attrs={"_ngcontent-app-root-c173": ""})[21].text
-            == "Online"
-        ):
-            # Only extract data if station is online
+        # Check if station is online
+        if re.findall(REGEX_MAPPING["online"], raw_data_str):
 
-            # Last updated value
-            data["last_updated"] = soup.findAll(
-                "span", attrs={"class": "ng-star-inserted"}
-            )[0].text
+            # Get Last Updated value
+            data["last_updated"] = re.findall(
+                REGEX_MAPPING["last_updated"], raw_data_str
+            )[0]
 
-            strings = data["last_updated"].split()
-            if (strings[0] == "(updated") and (strings[3] == "ago)"):
-                value = int(strings[1])
+            if data["last_updated"]:
+                time = int(data["last_updated"][0])
 
-                if (value >= 0) and (value <= 60):
-                    if strings[2][0:6] == "second":
-                        data["last_updated"] = value
+                if 0 <= time <= 60:
+                    if "second" in data["last_updated"][1]:
+                        data["last_updated"] = time
 
-                    elif strings[2][0:6] == "minute":
-                        data["last_updated"] = value * 60
+                    elif "minute" in data["last_updated"][1]:
+                        data["last_updated"] = time * 60
 
-                    elif strings[2][0:4] == "hour":
-                        if (value >= 0) and (value <= 24):
-                            data["last_updated"] = value * 3600
+                    elif "hour" in data["last_updated"][1]:
+                        if 0 <= time <= 24:
+                            data["last_updated"] = time * 3600
 
                         else:
-                            return None
+                            return {}
 
                     else:
-                        return None
+                        return {}
 
                 else:
-                    return None
+                    return {}
 
-            # for idx, entry in enumerate(soup.findAll("span", attrs={"class": "wu-value"})):
-            #     print(f"{idx}\t{entry}")
+            # Iterate over station's parameters and extract each one with regex
+            for parameter in station["parameters"]:
+                if parameter != "wind_bearing" and parameter != "radiation":
+                    data[parameter] = re.findall(
+                        REGEX_MAPPING[parameter], raw_data_str
+                    )[0]
 
-            # Get Temperature
-            if "temp" in station["parameters"]:
-                data["temp"] = soup.findAll("span", attrs={"class": "wu-value"})
-                data["temp"] = round(
-                    float(data["temp"][station["parameters"]["temp"]].text), 1
-                )
+                    try:
+                        data[parameter] = float(data[parameter])
+                    except:
+                        pass
 
-                if output_units["temp"] == "c":
+                # Wind Bearing is a special case and must be extracted with different rules
+                elif parameter == "wind_bearing":
+                    data[parameter] = soup.find("div", attrs={"class": "arrow-wrapper"})
+                    data[parameter] = ((data[parameter]["style"]).split())[1]
+                    data[parameter] = re.findall(
+                        REGEX_MAPPING[parameter], data[parameter]
+                    )
+
+                    if data[parameter]:
+                        data[parameter] = float(data[parameter][0]) - 180
+
+                # Solar Radiation is a special case and must be extracted with different rules
+                elif parameter == "radiation":
+                    data[parameter] = re.findall(REGEX_MAPPING[parameter], raw_data_str)
+
+                    if data[parameter][0]:
+                        data[parameter] = float(data[parameter][0])
+
+            # Convert units if necessary
+            if output_units["temp"] == "c":
+                if "temp" in data:
                     data["temp"] = _convert_f_to_c(data["temp"])
+                if "temp_feel" in data:
+                    data["temp_feel"] = _convert_f_to_c(data["temp_feel"])
+                if "dew_point" in data:
+                    data["dew_point"] = _convert_f_to_c(data["dew_point"])
 
-            # Get Dew Point
-            if "dew_point" in station["parameters"]:
-                data["dew_point"] = soup.findAll("span", attrs={"class": "wu-value"})
-                data["dew_point"] = _convert_f_to_c(
-                    float(data["dew_point"][station["parameters"]["dew_point"]].text)
-                )
-
-            # Get Humidity
-            if "humidity" in station["parameters"]:
-                data["humidity"] = soup.findAll("span", attrs={"class": "wu-value"})
-                data["humidity"] = round(
-                    float(data["humidity"][station["parameters"]["humidity"]].text)
-                )
-
-            # Get Pressure
-            if "pressure" in station["parameters"]:
-                data["pressure"] = soup.findAll("span", attrs={"class": "wu-value"})
-                data["pressure"] = round(
-                    float(data["pressure"][station["parameters"]["pressure"]].text), 2
-                )
-
-                if output_units["pressure"] == "hpa":
+            if output_units["pressure"] == "hpa":
+                if "pressure" in data:
                     data["pressure"] = _convert_inches_to_hpa(data["pressure"])
+            elif output_units["pressure"] == "mm":
+                if "pressure" in data:
+                    data["pressure"] = _convert_inches_to_mm(data["pressure"])
 
-            # Get Wind Speed
-            if "wind_speed" in station["parameters"]:
-                data["wind_speed"] = soup.findAll("span", attrs={"class": "wu-value"})
-                data["wind_speed"] = round(
-                    float(data["wind_speed"][station["parameters"]["wind_speed"]].text),
-                    1,
-                )
+            if output_units["speed"] == "kmph":
+                if "wind_speed" in data:
+                    data["wind_speed"] = _convert_mph_to_kmph(data["wind_speed"])
+                if "wind_gust" in data:
+                    data["wind_gust"] = _convert_mph_to_kmph(data["wind_gust"])
+            if output_units["speed"] == "mps":
+                if "wind_speed" in data:
+                    data["wind_speed"] = _convert_mph_to_mps(data["wind_speed"])
+                if "wind_gust" in data:
+                    data["wind_gust"] = _convert_mph_to_mps(data["wind_gust"])
 
-                if output_units["speed"] == "kph":
-                    data["wind_speed"] = _convert_mph_to_kph(data["wind_speed"])
-
-            # Get Wind Gust
-            if "wind_gust" in station["parameters"]:
-                data["wind_gust"] = soup.findAll("span", attrs={"class": "wu-value"})
-                data["wind_gust"] = round(
-                    float(data["wind_gust"][station["parameters"]["wind_gust"]].text), 1
-                )
-
-                if output_units["speed"] == "kph":
-                    data["wind_gust"] = _convert_mph_to_kph(data["wind_gust"])
-
-            # Get Wind Bearing
-            if "wind_bearing" in station["parameters"]:
-                data["wind_bearing"] = soup.find(
-                    "div", attrs={"class": "arrow-wrapper"}
-                )
-
-                string_full = ((data["wind_bearing"]["style"]).split())[1]
-                string_start = string_full[0:7]
-                string_end = string_full[-5:-1]
-
-                if (string_start == "rotate(") and (string_end == "deg)"):
-                    data["wind_bearing"] = int(string_full[7:-5]) - 180
-                else:
-                    data["wind_bearing"] = None
-
-            # Get Precipitation Rate
-            if "precip_rate" in station["parameters"]:
-                data["precip_rate"] = soup.findAll("span", attrs={"class": "wu-value"})
-                data["precip_rate"] = round(
-                    float(
-                        data["precip_rate"][station["parameters"]["precip_rate"]].text
-                    ),
-                    2,
-                )
-
-                if output_units["precip"] == "mm":
+            if output_units["precip"] == "mm":
+                if "precip_rate" in data:
                     data["precip_rate"] = _convert_inches_to_mm(data["precip_rate"])
-
-            # Get Precipitation Total
-            if "precip_total" in station["parameters"]:
-                data["precip_total"] = soup.findAll("span", attrs={"class": "wu-value"})
-                data["precip_total"] = round(
-                    float(
-                        data["precip_total"][station["parameters"]["precip_total"]].text
-                    ),
-                    2,
-                )
-
-                if output_units["precip"] == "mm":
+                if "precip_total" in data:
                     data["precip_total"] = _convert_inches_to_mm(data["precip_total"])
-
-            # Get UV Index
-            if "uv_index" in station["parameters"]:
-                data["uv_index"] = soup.findAll("span", attrs={"class": "wu-value"})
-                data["uv_index"] = round(
-                    float(data["uv_index"][station["parameters"]["uv_index"]].text)
-                )
-
-            # Get Solar Radiation
-            if "radiation" in station["parameters"]:
-                data["radiation"] = soup.findAll(
-                    "div", attrs={"class": "weather__text"}
-                )
-                strings = data["radiation"][-1].text.split()
-
-                if strings[1][-8:-3] == "watts":
-                    data["radiation"] = round(float(strings[0]), 1)
-                else:
-                    data["radiation"] = None
 
         return data
 
@@ -240,14 +194,23 @@ def dynamoDB_put(data):
     if "temp" in data:
         data["temp"] = round(data["temp"] * 10)
 
+    if "temp_feel" in data:
+        data["temp_feel"] = round(data["temp_feel"] * 10)
+
     if "dew_point" in data:
         data["dew_point"] = round(data["dew_point"] * 10)
+
+    if "humidity" in data:
+        data["humidity"] = round(data["humidity"])
 
     if "wind_speed" in data:
         data["wind_speed"] = round(data["wind_speed"] * 10)
 
     if "wind_gust" in data:
         data["wind_gust"] = round(data["wind_gust"] * 10)
+
+    if "wind_bearing" in data:
+        data["wind_bearing"] = round(data["wind_bearing"])
 
     if "pressure" in data:
         data["pressure"] = round(data["pressure"] * 100)
@@ -267,11 +230,12 @@ def dynamoDB_put(data):
     return table.put_item(Item=data)
 
 
-def main():
+if __name__ == "__main__":
     config = load_config(CONFIG_PATH)
 
+    # Iterate over the list of stations present in the config.yaml file
     for station in config["wunderground_stations"]:
-        data = get_wunderground_data(station)
+        data = get_wunderground_data(station, config["units"])
 
         if data:
             # Only write to Database if returned data isn't empty
@@ -284,12 +248,3 @@ def main():
 
         else:
             print(f"{time.time_ns()} - {station['id']} - Unable to retrieve data")
-
-
-if __name__ == "__main__":
-    main()
-    # schedule.every().minute.do(main)
-    #
-    # while True:
-    #     schedule.run_pending()
-    #     time.sleep(1)
