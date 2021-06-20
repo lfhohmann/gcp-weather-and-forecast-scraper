@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
-
 from bs4 import BeautifulSoup as bs
+from pprint import pprint
 import requests
-import boto3
-import time
 import yaml
 import re
 
@@ -17,7 +15,6 @@ LANGUAGE = "en-US,en;q=0.5"
 URL = "https://www.google.com/search?lr=lang_en&ie=UTF-8&q=weather"
 
 CONFIG_PATH = "/home/lfhohmann/gcp-weather-and-forecast-scraper/config.yaml"
-DB_TABLE = "google_forecast"
 
 
 def _convert_mph_to_kph(mph):
@@ -46,7 +43,7 @@ def load_config(filepath):
         return yaml.load(f, Loader=yaml.FullLoader)
 
 
-def get_google_forecast(region, output_units={"temp": "c", "speed": "kph"}):
+def get_data(region, output_units={"temp": "c", "speed": "kph"}):
     """Function to scrape data from Google Weather Forecast web page.
 
     ### Args:
@@ -182,61 +179,6 @@ def get_google_forecast(region, output_units={"temp": "c", "speed": "kph"}):
         return {}
 
 
-def dynamoDB_put(data):
-
-    # Convert values to ints, because DynamoDB does not support floats
-    if "temp" in data:
-        data["temp"] = round(data["temp"] * 10)
-
-    if "humidity" in data:
-        data["humidity"] = round(data["humidity"] * 10)
-
-    if "wind" in data:
-        data["wind"] = round(data["wind"] * 10)
-
-    if "precip" in data:
-        data["precip"] = round(data["precip"] * 10)
-
-    for idx, _ in enumerate(data["next_days"]):
-        data["next_days"][idx]["min_temp"] = round(
-            data["next_days"][idx]["min_temp"] * 10
-        )
-        data["next_days"][idx]["max_temp"] = round(
-            data["next_days"][idx]["max_temp"] * 10
-        )
-
-    for idx, _ in enumerate(data["curves"]["precip"]):
-        data["curves"]["precip"][idx][0] = round(data["curves"]["precip"][idx][0] * 10)
-
-    for idx, _ in enumerate(data["curves"]["wind"]):
-        data["curves"]["wind"][idx][0] = round(data["curves"]["wind"][idx][0] * 10)
-
-    dynamodb = boto3.resource("dynamodb")
-    table = dynamodb.Table(DB_TABLE)
-
-    return table.put_item(Item=data)
-
-
-def main():
-    config = load_config(CONFIG_PATH)
-
-    data = get_google_forecast(config["google_forecast"]["region"])
-
-    if data:
-        # Only write to Database if returned data isn't empty
-        data["timestamp"] = time.time_ns()
-        dynamoDB_put(data)
-
-        print(f"{time.time_ns()} - Data retrieved and put in DB")
-
-    else:
-        print(f"{time.time_ns()} - Unable to retrieve data")
-
-
 if __name__ == "__main__":
-    main()
-    # schedule.every(30).minutes.do(main)
-    #
-    # while True:
-    #     schedule.run_pending()
-    #     time.sleep(1)
+    data = get_data("curitiba")
+    pprint(data)
