@@ -45,6 +45,9 @@ def dynamoDB_put(data):
     if "precip_total" in data:
         data["precip_total"] = round(data["precip_total"] * 100)
 
+    if "uv_index" in data:
+        data["uv_index"] = round(data["uv_index"])
+
     if "radiation" in data:
         data["radiation"] = round(data["radiation"] * 10)
 
