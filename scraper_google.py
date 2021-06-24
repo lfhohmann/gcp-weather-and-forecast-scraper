@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from bs4 import BeautifulSoup as bs
 from pprint import pprint
 import converters
@@ -240,6 +241,12 @@ def _get_hourly_forecast(header, url, output_units):
     data_in = re.search(r"pmc='({.*?})'", text).group(1)
     data_in = json.loads(data_in.replace(r"\x22", '"').replace(r'\\"', r"\""))
 
+    # Extracting the input values units
+    if "km/h" in data_in["wobnm"]["wobhl"][0]["ws"]:
+        input_units = "metric"
+    else:
+        input_units = "imperial"
+
     # Create a list to store the output data
     data_out = list()
 
@@ -256,15 +263,27 @@ def _get_hourly_forecast(header, url, output_units):
         entry_out["precip_prob"] = float(entry_in["p"].replace("%", ""))
 
         # Get the right data for the chosen output units
-        if output_units["temp"] == "c":
-            entry_out["temp"] = float(entry_in["tm"])
-        else:
-            entry_out["temp"] = float(entry_in["ttm"])
+        if input_units == "metric":
+            if output_units["temp"] == "c":
+                entry_out["temp"] = float(entry_in["tm"])
+            else:
+                entry_out["temp"] = float(entry_in["ttm"])
 
-        if output_units["speed"] == "km/h":
-            entry_out["wind_speed"] = float(entry_in["ws"].replace("km/h", ""))
+            if output_units["speed"] == "km/h":
+                entry_out["wind_speed"] = float(entry_in["ws"].replace("km/h", ""))
+            else:
+                entry_out["wind_speed"] = float(entry_in["tws"].replace("mph", ""))
+
         else:
-            entry_out["wind_speed"] = float(entry_in["tws"].replace("mph", ""))
+            if output_units["temp"] == "c":
+                entry_out["temp"] = float(entry_in["ttm"])
+            else:
+                entry_out["temp"] = float(entry_in["tm"])
+
+            if output_units["speed"] == "km/h":
+                entry_out["wind_speed"] = float(entry_in["tws"].replace("km/h", ""))
+            else:
+                entry_out["wind_speed"] = float(entry_in["ws"].replace("mph", ""))
 
         # Append the output entry to the output list
         data_out.append(entry_out)
