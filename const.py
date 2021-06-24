@@ -1,5 +1,4 @@
-# CONFIG_PATH = "/home/lfhohmann/gcp-weather-and-forecast-scraper/config.yaml"
-CONFIG_PATH = "C:\\.lfhohmann\\dev\\_github\\gcp-weather-and-forecast-scraper\\config.yaml"
+CONFIG_PATH = "/home/lfhohmann/gcp-weather-and-forecast-scraper/config.yaml"
 
 GOOGLE_DB_TABLE = "google_forecast"
 GOOGLE_URL = "https://www.google.com/search?hl=en&lr=lang_en&ie=UTF-8&q=weather"
