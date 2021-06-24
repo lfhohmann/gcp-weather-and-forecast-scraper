@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from bs4 import BeautifulSoup as bs
 from pprint import pprint
+from const import *
 import converters
 import requests
 import json
@@ -11,14 +12,8 @@ Part of this code is based on Dniamir's work https://github.com/dniamir/GoogleWe
 And another part was made possible because of Andrej Kesely answer on https://stackoverflow.com/.
 """
 
-URL = "https://www.google.com/search?hl=en&lr=lang_en&ie=UTF-8&q=weather"
-HEADER = {
-    "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:89.0) Gecko/20100101 Firefox/89.0",
-    "Language": "en-US,en;q=0.5",
-}
 
-
-def _get_soup(header, url):
+def _get_soup(url):
     """This functions simply gets the header and url, creates a session and
        generates the "soup" to pass to the other functions.
 
@@ -33,9 +28,9 @@ def _get_soup(header, url):
     # Try to read data from URL, if it fails, return None
     try:
         session = requests.Session()
-        session.headers["User-Agent"] = header["User-Agent"]
-        session.headers["Accept-Language"] = header["Language"]
-        session.headers["Content-Language"] = header["Language"]
+        session.headers["User-Agent"] = GOOGLE_HEADER["User-Agent"]
+        session.headers["Accept-Language"] = GOOGLE_HEADER["Language"]
+        session.headers["Content-Language"] = GOOGLE_HEADER["Language"]
         html = session.get(url)
 
         return bs(html.text, "html.parser")
@@ -78,24 +73,24 @@ def _get_weather_now(soup, output_units):
     data["humidity"] = float(
         soup.find("span", attrs={"id": "wob_hm"}).text.replace("%", "")
     )
-    data["wind"] = soup.find("span", attrs={"id": "wob_ws"}).text
+    data["wind_speed"] = soup.find("span", attrs={"id": "wob_ws"}).text
 
     # Autodetect and convert "Temperature" and "Wind Speed" units
-    if "km/h" in data["wind"]:
-        data["wind"] = float(data["wind"].replace("km/h", ""))
+    if "km/h" in data["wind_speed"]:
+        data["wind_speed"] = float(data["wind_speed"].replace("km/h", ""))
 
         if output_units["speed"] == "mph":
-            data["wind"] = converters.kmph_to_mph(data["wind"])
+            data["wind_speed"] = converters.kmph_to_mph(data["wind_speed"])
 
         if output_units["temp"] == "f":
             data["temp"] = converters.c_to_f(data["temp"])
 
         input_units = "metric"
     else:
-        data["wind"] = float(data["wind"].replace("mph", ""))
+        data["wind_speed"] = float(data["wind_speed"].replace("mph", ""))
 
         if output_units["speed"] == "kph":
-            data["wind"] = converters.mph_to_kmph(data["wind"])
+            data["wind_speed"] = converters.mph_to_kmph(data["wind_speed"])
 
         if output_units["temp"] == "c":
             data["temp"] = converters.f_to_c(data["temp"])
@@ -217,7 +212,7 @@ def _get_wind(soup, output_units):
     return data
 
 
-def _get_hourly_forecast(header, url, output_units):
+def _get_hourly_forecast(url, output_units):
     """This functions extracts hourly forecast data for the next 15 days.
 
     Args:
@@ -234,7 +229,7 @@ def _get_hourly_forecast(header, url, output_units):
               "Temperature", "Weather Condition" and "Wind Speed".
     """
     # Build the header
-    header = {"User-Agent": header["User-Agent"]}
+    header = {"User-Agent": GOOGLE_HEADER["User-Agent"]}
 
     # Request and extract the data from the url
     text = requests.get(url, headers=header).text
@@ -291,7 +286,7 @@ def _get_hourly_forecast(header, url, output_units):
     return data_out
 
 
-def get_data(header, url, region, output_units={"temp": "c", "speed": "km/h"}):
+def get_data(region, output_units={"temp": "c", "speed": "km/h"}):
     """This is the wrapper that calls the other functions and joins the data into
        one output.
 
@@ -309,8 +304,8 @@ def get_data(header, url, region, output_units={"temp": "c", "speed": "km/h"}):
               functions
     """
     # Build url and get the "soup" from it
-    url = f"{url}+{region.replace(' ', '+')}"
-    soup = _get_soup(header, url)
+    url = f"{GOOGLE_URL}+{region.replace(' ', '+')}"
+    soup = _get_soup(url)
 
     # Create a dictionary to store the output data
     data = dict()
@@ -323,11 +318,11 @@ def get_data(header, url, region, output_units={"temp": "c", "speed": "km/h"}):
         data["next_days"] = _get_next_days(soup, input_units, output_units)
         data["wind"] = _get_wind(soup, output_units)
 
-    data["hourly_forecast"] = _get_hourly_forecast(header, url, output_units)
+    data["hourly_forecast"] = _get_hourly_forecast(url, output_units)
 
     return data
 
 
 if __name__ == "__main__":
-    data = get_data(HEADER, URL, "curitiba", {"temp": "c", "speed": "km/h"})
+    data = get_data("curitiba", {"temp": "c", "speed": "km/h"})
     pprint(data)

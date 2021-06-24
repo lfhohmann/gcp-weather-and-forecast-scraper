@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
+from pprint import pprint
 import scraper_google
+from const import *
 import boto3
 import yaml
 import time
-
-CONFIG_PATH = "/home/lfhohmann/gcp-weather-and-forecast-scraper/config.yaml"
-DB_TABLE = "google_forecast"
 
 
 def load_config(filepath):
@@ -15,19 +14,22 @@ def load_config(filepath):
 
 
 def dynamoDB_put(data):
-
     # Convert values to ints, because DynamoDB does not support floats
-    if "temp" in data:
-        data["temp"] = round(data["temp"] * 10)
+    if "temp" in data["weather_now"]:
+        data["weather_now"]["temp"] = round(data["weather_now"]["temp"] * 10)
 
-    if "humidity" in data:
-        data["humidity"] = round(data["humidity"] * 10)
+    if "humidity" in data["weather_now"]:
+        data["weather_now"]["humidity"] = round(data["weather_now"]["humidity"] * 10)
 
-    if "wind" in data:
-        data["wind"] = round(data["wind"] * 10)
+    if "wind_speed" in data["weather_now"]:
+        data["weather_now"]["wind_speed"] = round(
+            data["weather_now"]["wind_speed"] * 10
+        )
 
-    if "precip" in data:
-        data["precip"] = round(data["precip"] * 10)
+    if "precip_prob" in data["weather_now"]:
+        data["weather_now"]["precip_prob"] = round(
+            data["weather_now"]["precip_prob"] * 10
+        )
 
     for idx, _ in enumerate(data["next_days"]):
         data["next_days"][idx]["min_temp"] = round(
@@ -37,14 +39,30 @@ def dynamoDB_put(data):
             data["next_days"][idx]["max_temp"] * 10
         )
 
-    for idx, _ in enumerate(data["curves"]["precip"]):
-        data["curves"]["precip"][idx][0] = round(data["curves"]["precip"][idx][0] * 10)
+    for idx, _ in enumerate(data["wind"]):
+        data["wind"][idx][0] = round(data["wind"][idx][0] * 10)
 
-    for idx, _ in enumerate(data["curves"]["wind"]):
-        data["curves"]["wind"][idx][0] = round(data["curves"]["wind"][idx][0] * 10)
+    for idx, _ in enumerate(data["hourly_forecast"]):
+        data["hourly_forecast"][idx]["humidity"] = round(
+            data["hourly_forecast"][idx]["humidity"] * 10
+        )
+
+        data["hourly_forecast"][idx]["precip_prob"] = round(
+            data["hourly_forecast"][idx]["precip_prob"] * 10
+        )
+
+        data["hourly_forecast"][idx]["temp"] = round(
+            data["hourly_forecast"][idx]["temp"] * 10
+        )
+
+        data["hourly_forecast"][idx]["wind_speed"] = round(
+            data["hourly_forecast"][idx]["wind_speed"] * 10
+        )
+
+    # pprint(data)
 
     dynamodb = boto3.resource("dynamodb")
-    table = dynamodb.Table(DB_TABLE)
+    table = dynamodb.Table(GOOGLE_DB_TABLE)
 
     return table.put_item(Item=data)
 
