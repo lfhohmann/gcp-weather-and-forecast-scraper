@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 from bs4 import BeautifulSoup as bs
+from helpers import load_config
 from pprint import pprint
 from const import *
 import converters
 import requests
-import yaml
 import re
 
 
@@ -25,12 +25,6 @@ REGEX_MAPPING = {
     "uv_index": r"UV([\d\.]+)",
     "radiation": r"radiationCURRENT([\d\.]+) watts",
 }
-
-
-def load_config(filepath):
-    # Loads YAML config file
-    with open(filepath, "r") as f:
-        return yaml.load(f, Loader=yaml.FullLoader)
 
 
 def get_data(
@@ -176,6 +170,8 @@ def get_data(
 
 
 if __name__ == "__main__":
+    """For testing purposes"""
+
     config = load_config(CONFIG_PATH)
 
     # Iterate over the list of stations present in the config.yaml file

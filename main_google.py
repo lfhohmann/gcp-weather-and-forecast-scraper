@@ -1,16 +1,10 @@
 #!/usr/bin/env python3
+from helpers import load_config
 from pprint import pprint
 import scraper_google
 from const import *
 import boto3
-import yaml
 import time
-
-
-def load_config(filepath):
-    # Loads YAML config file
-    with open(filepath, "r") as f:
-        return yaml.load(f, Loader=yaml.FullLoader)
 
 
 def dynamoDB_put(data):
