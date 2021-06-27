@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
-
+from datetime import datetime as dt
 import scraper_wunderground
+from const import *
 import boto3
 import yaml
 import time
-
-CONFIG_PATH = "/home/lfhohmann/gcp-weather-and-forecast-scraper/config.yaml"
-DB_TABLE = "wunderground_pws"
 
 
 def load_config(filepath):
@@ -54,7 +52,7 @@ def dynamoDB_put(data):
         data["radiation"] = round(data["radiation"] * 10)
 
     dynamodb = boto3.resource("dynamodb")
-    table = dynamodb.Table(DB_TABLE)
+    table = dynamodb.Table(WUNDERGROUND_DB_TABLE)
 
     return table.put_item(Item=data)
 
