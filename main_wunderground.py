@@ -58,16 +58,18 @@ if __name__ == "__main__":
     for station in config["wunderground_stations"]:
         data = scraper_wunderground.get_data(station, config["units"])
 
+        print(f"{dt.now().strftime(r'%Y/%m/%d %H:%M:%S')} - SCRAPE STARTED")
+
         if data:
             # Only write to Database if returned data isn't empty
             data["station_id"] = station["id"]
             data["timestamp"] = time.time_ns()
 
-            dynamoDB_put(data)
+            item_id = dynamoDB_put(data)
 
-            # print(
-            #     f"{dt.now().strftime(r'%Y/%m/%d %H:%M:%S')} - {station['id']} - Data retrieved and put in DB"
-            # )
+            print(
+                f"{dt.now().strftime(r'%Y/%m/%d %H:%M:%S')} - {station['id']} - Data retrieved and put in DB: {item_id}"
+            )
 
         else:
             print(
