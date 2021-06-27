@@ -9,7 +9,7 @@ import re
 
 """
 Part of this code is based on Dniamir's work https://github.com/dniamir/GoogleWeather.
-And another part was made possible because of Andrej Kesely answer on https://stackoverflow.com/.
+And another part was made possible because of Andrej Kesely answer on https://stackoverflow.com/questions/68071846/how-can-i-extract-text-from-inside-a-svg-with-beaultifulsoup/68072190#68072190.
 """
 
 

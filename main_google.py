@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from datetime import datetime as dt
 from helpers import load_config
 from pprint import pprint
 import scraper_google
@@ -71,7 +72,9 @@ if __name__ == "__main__":
         data["timestamp"] = time.time_ns()
         dynamoDB_put(data)
 
-        print(f"{time.time_ns()} - Data retrieved and put in DB")
+        print(
+            f"{dt.now().strftime(r'%Y/%m/%d %H:%M:%S')} - Data retrieved and put in DB"
+        )
 
     else:
-        print(f"{time.time_ns()} - Unable to retrieve data")
+        print(f"{dt.now().strftime(r'%Y/%m/%d %H:%M:%S')} - Unable to retrieve data")
