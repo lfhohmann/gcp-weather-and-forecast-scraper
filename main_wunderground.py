@@ -54,21 +54,21 @@ def dynamoDB_put(data):
 if __name__ == "__main__":
     config = load_config(CONFIG_PATH)
 
+    print(f"{dt.now().strftime(r'%Y/%m/%d %H:%M:%S')} - SCRAPE STARTED")
+
     # Iterate over the list of stations present in the config.yaml file
     for station in config["wunderground_stations"]:
         data = scraper_wunderground.get_data(station, config["units"])
-
-        print(f"{dt.now().strftime(r'%Y/%m/%d %H:%M:%S')} - SCRAPE STARTED")
 
         if data:
             # Only write to Database if returned data isn't empty
             data["station_id"] = station["id"]
             data["timestamp"] = time.time_ns()
 
-            item_id = dynamoDB_put(data)
+            response = dynamoDB_put(data)
 
             print(
-                f"{dt.now().strftime(r'%Y/%m/%d %H:%M:%S')} - {station['id']} - Data retrieved and put in DB: {item_id}"
+                f"{dt.now().strftime(r'%Y/%m/%d %H:%M:%S')} - {station['id']} - Data retrieved and put in DB: Response code - {response['ResponseMetadata']['HTTPStatusCode']}"
             )
 
         else:
