@@ -65,7 +65,11 @@ if __name__ == "__main__":
 
             dynamoDB_put(data)
 
-            print(f"{time.time_ns()} - {station['id']} - Data retrieved and put in DB")
+            # print(
+            #     f"{dt.now().strftime(r'%Y/%m/%d %H:%M:%S')} - {station['id']} - Data retrieved and put in DB"
+            # )
 
         else:
-            print(f"{time.time_ns()} - {station['id']} - Unable to retrieve data")
+            print(
+                f"{dt.now().strftime(r'%Y/%m/%d %H:%M:%S')} - {station['id']} - Unable to retrieve data"
+            )
