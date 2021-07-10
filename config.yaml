@@ -342,7 +342,7 @@ wunderground_stations:
       - uv_index
       - radiation
   - id: ISOJOS26
-    name: Borda do Campo - Colônia São José dos
+    name: Borda do Campo - Colonia Sao Jose dos
     coordinates:
       latitude: -25.546
       longitude: -49.096
@@ -350,7 +350,7 @@ wunderground_stations:
     location:
       country: Brazil
       state: PR
-      city: São José dos Pinhais
+      city: Sao Jose dos Pinhais
     equipament:
       hardware: AcuRite Atlas Weather Station with AcuRite Access
       software: myAcuRite
@@ -368,7 +368,7 @@ wunderground_stations:
       - precip_total
       - uv_index
   - id: ISOJOS29
-    name: Estação T-SBCT5 - ISOJOS29
+    name: Estacao T-SBCT5 - ISOJOS29
     coordinates:
       latitude: -25.552
       longitude: -49.200
@@ -376,7 +376,7 @@ wunderground_stations:
     location:
       country: Brazil
       state: PR
-      city: São José dos Pinhais
+      city: Sao Jose dos Pinhais
     equipament:
       hardware: other
       software: Arduino UNO version1
@@ -395,7 +395,7 @@ wunderground_stations:
       - uv_index
       - radiation 
   - id: ISOJOS39
-    name: Estação SJP J.F. Moreira
+    name: Estacao SJP J.F. Moreira
     coordinates:
       latitude: -25.516
       longitude: -49.195
@@ -403,7 +403,7 @@ wunderground_stations:
     location:
       country: Brazil
       state: PR
-      city: São José dos Pinhais
+      city: Sao Jose dos Pinhais
     equipament:
       hardware: other
       software: NodeMCU-ESP12
@@ -471,7 +471,7 @@ wunderground_stations:
       - wind_direction
       - precip_total
   - id: IBALSA3
-    name: Perau do Purunã - 1080M
+    name: Perau do Puruna - 1080M
     coordinates:
       latitude: -25.428
       longitude: -49.724
