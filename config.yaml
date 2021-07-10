@@ -16,7 +16,7 @@ wunderground_stations:
       country: Brazil
       state: PR
       city: Curitiba
-    equipament:
+    equipment:
       hardware: Davis Vantage Pro2 (Wireless)
       software: weatherlink.com 1.10
     parameters:
@@ -41,7 +41,7 @@ wunderground_stations:
       country: Brazil
       state: PR
       city: Curitiba
-    equipament:
+    equipment:
       hardware: other
       software: EasyWeather V8.8.0
     parameters:
@@ -65,7 +65,7 @@ wunderground_stations:
       country: Brazil
       state: PR
       city: Curitiba
-    equipament:
+    equipment:
       hardware: Ambient Weather WS-2902
       software: AMBWeatherV4.2.9
     parameters:
@@ -90,7 +90,7 @@ wunderground_stations:
       country: Brazil
       state: PR
       city: Curitiba
-    equipament:
+    equipment:
       hardware: Ambient Weather WS-2902
       software: AMBWeatherV4.2.9
     parameters:
@@ -117,7 +117,7 @@ wunderground_stations:
       country: Brazil
       state: PR
       city: Curitiba
-    equipament:
+    equipment:
       hardware: AcuRite 5-in-1 Weather Station with AcuRite Access
       software: myAcuRite
     parameters:
@@ -142,7 +142,7 @@ wunderground_stations:
       country: Brazil
       state: PR
       city: Curitiba
-    equipament:
+    equipment:
       hardware: Ambient Weather WS-1400-IP (Wireless)
       software: WH2602 V4.5.8
     parameters:
@@ -168,7 +168,7 @@ wunderground_stations:
       country: Brazil
       state: PR
       city: Curitiba
-    equipament:
+    equipment:
       hardware: Oregon Scientific Professional Weather Center
       software: WsWin32 V2.98.4
     parameters:
@@ -193,7 +193,7 @@ wunderground_stations:
       country: Brazil
       state: PR
       city: Curitiba
-    equipament:
+    equipment:
       hardware: Ambient Weather WS-2090 (Wireless)
       software: AMBWeatherV4.0.2
     parameters:
@@ -220,7 +220,7 @@ wunderground_stations:
       country: Brazil
       state: PR
       city: Curitiba
-    equipament:
+    equipment:
       hardware: Ambient Weather WS-2902
       software: AMBWeatherV3.0.3
     parameters:
@@ -247,7 +247,7 @@ wunderground_stations:
       country: Brazil
       state: PR
       city: Curitiba
-    equipament:
+    equipment:
       hardware: other
       software: myAcuRite
     parameters:
@@ -272,7 +272,7 @@ wunderground_stations:
       country: Brazil
       state: PR
       city: Curitiba
-    equipament:
+    equipment:
       hardware: Ambient Weather WS-2090 (Wireless)
       software: EasyWeatherV1.1.4
     parameters:
@@ -299,7 +299,7 @@ wunderground_stations:
       country: Brazil
       state: PR
       city: Curitiba
-    equipament:
+    equipment:
       hardware: Ambient Weather WS-2902
       software: AMBWeatherV4.1.7
     parameters:
@@ -326,7 +326,7 @@ wunderground_stations:
       country: Brazil
       state: PR
       city: Curitiba
-    equipament:
+    equipment:
       hardware: Ambient Weather WS-1400-IP (Wireless)
       software: WH2600 V4.3.6
     parameters:
@@ -352,7 +352,7 @@ wunderground_stations:
       country: Brazil
       state: PR
       city: Sao Jose dos Pinhais
-    equipament:
+    equipment:
       hardware: AcuRite Atlas Weather Station with AcuRite Access
       software: myAcuRite
     parameters:
@@ -378,7 +378,7 @@ wunderground_stations:
       country: Brazil
       state: PR
       city: Sao Jose dos Pinhais
-    equipament:
+    equipment:
       hardware: other
       software: Arduino UNO version1
     parameters:
@@ -405,7 +405,7 @@ wunderground_stations:
       country: Brazil
       state: PR
       city: Sao Jose dos Pinhais
-    equipament:
+    equipment:
       hardware: other
       software: NodeMCU-ESP12
     parameters:
@@ -430,7 +430,7 @@ wunderground_stations:
       country: Brazil
       state: PR
       city: Colombo
-    equipament:
+    equipment:
       hardware: other
       software: Arduino UNO version1
     parameters:
@@ -457,7 +457,7 @@ wunderground_stations:
       country: Brazil
       state: PR
       city: Balsa Nova
-    equipament:
+    equipment:
       hardware: AcuRite 5-in-1 Weather Station with AcuRite Access
       software: vws version00
     parameters:
@@ -481,7 +481,7 @@ wunderground_stations:
       country: Brazil
       state: PR
       city: Balsa Nova
-    equipament:
+    equipment:
       hardware: other
       software: Arduino UNO version1
     parameters:
