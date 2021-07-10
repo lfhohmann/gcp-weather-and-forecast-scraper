@@ -61,6 +61,7 @@ wunderground_stations:
       latitude: -25.488
       longitude: -49.215
       altitude: 923
+    location:
       country: Brazil
       state: PR
       city: Curitiba
