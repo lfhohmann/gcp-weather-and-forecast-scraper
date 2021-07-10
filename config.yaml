@@ -7,6 +7,18 @@ google_forecast:
   region: curitiba
 wunderground_stations:
   - id: ICURIT11
+    name: Plugfield
+    coordinates:
+      latitude: -25.487
+      longitude: -49.239
+      altitude: 879
+    location:
+      country: Brazil
+      state: PR
+      city: Curitiba
+    equipament:
+      hardware: Davis Vantage Pro2 (Wireless)
+      software: weatherlink.com 1.10
     parameters:
       - temp
       - temp_feel
@@ -20,6 +32,18 @@ wunderground_stations:
       - precip_rate
       - precip_total
   - id: ICURIT21
+    name: GNAP
+    coordinates:
+      latitude: -25.477
+      longitude: -49.289
+      altitude: 932
+    location:
+      country: Brazil
+      state: PR
+      city: Curitiba
+    equipament:
+      hardware: other
+      software: EasyWeather V8.8.0
     parameters:
       - temp
       - temp_feel
@@ -32,6 +56,17 @@ wunderground_stations:
       - wind_bearing
       - precip_total
   - id: ICURIT32
+    name: Xampion's house
+    coordinates:
+      latitude: -25.488
+      longitude: -49.215
+      altitude: 923
+      country: Brazil
+      state: PR
+      city: Curitiba
+    equipament:
+      hardware: Ambient Weather WS-2902
+      software: AMBWeatherV4.2.9
     parameters:
       - temp
       - temp_feel
@@ -45,6 +80,18 @@ wunderground_stations:
       - precip_rate
       - precip_total
   - id: ICURIT41
+    name: Curitiba xaxim 918m
+    coordinates:
+      latitude: -25.506
+      longitude: -49.272
+      altitude: 918
+    location:
+      country: Brazil
+      state: PR
+      city: Curitiba
+    equipament:
+      hardware: Ambient Weather WS-2902
+      software: AMBWeatherV4.2.9
     parameters:
       - temp
       - temp_feel
@@ -60,6 +107,18 @@ wunderground_stations:
       - uv_index
       - radiation
   - id: ICURIT44
+    name: Santa Felicidade - Wanda Wolf
+    coordinates:
+      latitude: -25.379
+      longitude: -49.327
+      altitude: 302
+    location:
+      country: Brazil
+      state: PR
+      city: Curitiba
+    equipament:
+      hardware: AcuRite 5-in-1 Weather Station with AcuRite Access
+      software: myAcuRite
     parameters:
       - temp
       - temp_feel
@@ -73,6 +132,18 @@ wunderground_stations:
       - precip_rate
       - precip_total
   - id: ICURIT46
+    name: Cachoeira - 1005m
+    coordinates:
+      latitude: -25.351
+      longitude: -49.270
+      altitude: 1004
+    location:
+      country: Brazil
+      state: PR
+      city: Curitiba
+    equipament:
+      hardware: Ambient Weather WS-1400-IP (Wireless)
+      software: WH2602 V4.5.8
     parameters:
       - temp
       - temp_feel
@@ -87,6 +158,18 @@ wunderground_stations:
       - uv_index
       - radiation
   - id: IPRCURIT2
+    name: Campo Comprido - 940m
+    coordinates:
+      latitude: -25.443
+      longitude: -49.329
+      altitude: 940
+    location:
+      country: Brazil
+      state: PR
+      city: Curitiba
+    equipament:
+      hardware: Oregon Scientific Professional Weather Center
+      software: WsWin32 V2.98.4
     parameters:
       - temp
       - temp_feel
@@ -100,6 +183,18 @@ wunderground_stations:
       - precip_rate
       - precip_total
   - id: IPRCURIT8
+    name: Curitiba Ahu - 931m
+    coordinates:
+      latitude: -25.397
+      longitude: -49.263
+      altitude: 930
+    location:
+      country: Brazil
+      state: PR
+      city: Curitiba
+    equipament:
+      hardware: Ambient Weather WS-2090 (Wireless)
+      software: AMBWeatherV4.0.2
     parameters:
       - temp
       - temp_feel
@@ -115,6 +210,18 @@ wunderground_stations:
       - uv_index
       - radiation
   - id: IPRCURIT10
+    name: Pilarzinho - 925m
+    coordinates:
+      latitude: -25.398
+      longitude: -49.275
+      altitude: 921
+    location:
+      country: Brazil
+      state: PR
+      city: Curitiba
+    equipament:
+      hardware: Ambient Weather WS-2902
+      software: AMBWeatherV3.0.3
     parameters:
       - temp
       - temp_feel
@@ -130,6 +237,18 @@ wunderground_stations:
       - uv_index
       - radiation
   - id: ICURITIB15
+    name: Maranatha Sao Braz
+    coordinates:
+      latitude: -25.427
+      longitude: -49.361
+      altitude: 959999
+    location:
+      country: Brazil
+      state: PR
+      city: Curitiba
+    equipament:
+      hardware: other
+      software: myAcuRite
     parameters:
       - temp
       - temp_feel
@@ -143,6 +262,18 @@ wunderground_stations:
       - precip_rate
       - precip_total  
   - id: ICURITIB24
+    name: Curitiba
+    coordinates:
+      latitude: -25.417
+      longitude: -49.322
+      altitude: 911
+    location:
+      country: Brazil
+      state: PR
+      city: Curitiba
+    equipament:
+      hardware: Ambient Weather WS-2090 (Wireless)
+      software: EasyWeatherV1.1.4
     parameters:
       - temp
       - temp_feel
@@ -158,6 +289,18 @@ wunderground_stations:
       - uv_index
       - radiation
   - id: ICURITIB28
+    name: Parque Barigui
+    coordinates:
+      latitude: -25.426
+      longitude: -49.304
+      altitude: 925
+    location:
+      country: Brazil
+      state: PR
+      city: Curitiba
+    equipament:
+      hardware: Ambient Weather WS-2902
+      software: AMBWeatherV4.1.7
     parameters:
       - temp
       - temp_feel
@@ -173,6 +316,18 @@ wunderground_stations:
       - uv_index
       - radiation
   - id: ICURITIB29
+    name: REF. (UFPR - INMET 807)
+    coordinates:
+      latitude: -25.471
+      longitude: -49.242
+      altitude: 935
+    location:
+      country: Brazil
+      state: PR
+      city: Curitiba
+    equipament:
+      hardware: Ambient Weather WS-1400-IP (Wireless)
+      software: WH2600 V4.3.6
     parameters:
       - temp
       - temp_feel
@@ -187,6 +342,18 @@ wunderground_stations:
       - uv_index
       - radiation
   - id: ISOJOS26
+    name: Borda do Campo - Colônia São José dos
+    coordinates:
+      latitude: -25.546
+      longitude: -49.096
+      altitude: 940
+    location:
+      country: Brazil
+      state: PR
+      city: São José dos Pinhais
+    equipament:
+      hardware: AcuRite Atlas Weather Station with AcuRite Access
+      software: myAcuRite
     parameters:
       - temp
       - temp_feel
@@ -201,6 +368,18 @@ wunderground_stations:
       - precip_total
       - uv_index
   - id: ISOJOS29
+    name: Estação T-SBCT5 - ISOJOS29
+    coordinates:
+      latitude: -25.552
+      longitude: -49.200
+      altitude: 905
+    location:
+      country: Brazil
+      state: PR
+      city: São José dos Pinhais
+    equipament:
+      hardware: other
+      software: Arduino UNO version1
     parameters:
       - temp
       - temp_feel
@@ -216,6 +395,18 @@ wunderground_stations:
       - uv_index
       - radiation 
   - id: ISOJOS39
+    name: Estação SJP J.F. Moreira
+    coordinates:
+      latitude: -25.516
+      longitude: -49.195
+      altitude: 892
+    location:
+      country: Brazil
+      state: PR
+      city: São José dos Pinhais
+    equipament:
+      hardware: other
+      software: NodeMCU-ESP12
     parameters:
       - temp
       - temp_feel
@@ -229,6 +420,18 @@ wunderground_stations:
       - precip_rate
       - precip_total
   - id: ICOLOM18
+    name: WRF Teste1
+    coordinates:
+      latitude: -25.276
+      longitude: -49.250
+      altitude: 1043
+    location:
+      country: Brazil
+      state: PR
+      city: Colombo
+    equipament:
+      hardware: other
+      software: Arduino UNO version1
     parameters:
       - temp
       - temp_feel
@@ -244,6 +447,18 @@ wunderground_stations:
       - uv_index
       - radiation
   - id: IBALSA1
+    name: Aeroclube de Planadores de Balsa Nova - SDUE
+    coordinates:
+      latitude: -25.520
+      longitude: -49.685
+      altitude: 1019
+    location:
+      country: Brazil
+      state: PR
+      city: Balsa Nova
+    equipament:
+      hardware: AcuRite 5-in-1 Weather Station with AcuRite Access
+      software: vws version00
     parameters:
       - temp
       - temp_feel
@@ -256,6 +471,18 @@ wunderground_stations:
       - wind_direction
       - precip_total
   - id: IBALSA3
+    name: Perau do Purunã - 1080M
+    coordinates:
+      latitude: -25.428
+      longitude: -49.724
+      altitude: 1079
+    location:
+      country: Brazil
+      state: PR
+      city: Balsa Nova
+    equipament:
+      hardware: other
+      software: Arduino UNO version1
     parameters:
       - temp
       - temp_feel
