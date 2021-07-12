@@ -72,7 +72,11 @@ if __name__ == "__main__":
             )
 
             if station["put_in_short_db"]:
-                print(station["id"])
+                response = dynamoDB_put(WUNDERGROUND_DB_SHORT_TABLE, data)
+
+                print(
+                    f"{dt.now().strftime(r'%Y/%m/%d %H:%M:%S')} - {station['id']} - Data retrieved and put in SHORT DB: Response code - {response['ResponseMetadata']['HTTPStatusCode']}"
+                )
 
         else:
             print(
