@@ -72,6 +72,8 @@ if __name__ == "__main__":
             )
 
             if station["put_in_short_db"]:
+                data["expiration_timestamp"] = round(time.time()) + (7 * 24 * 60 * 60)
+
                 response = dynamoDB_put(WUNDERGROUND_DB_SHORT_TABLE, data)
 
                 print(
