@@ -7,7 +7,7 @@ import boto3
 import time
 
 
-def dynamoDB_put(data):
+def dynamoDB_put(table, data):
     # Convert values to ints, because DynamoDB does not support floats
     if "temp" in data:
         data["temp"] = round(data["temp"] * 10)
@@ -46,7 +46,7 @@ def dynamoDB_put(data):
         data["radiation"] = round(data["radiation"] * 10)
 
     dynamodb = boto3.resource("dynamodb")
-    table = dynamodb.Table(WUNDERGROUND_DB_TABLE)
+    table = dynamodb.Table(table)
 
     return table.put_item(Item=data)
 
@@ -65,11 +65,14 @@ if __name__ == "__main__":
             data["station_id"] = station["id"]
             data["timestamp"] = time.time_ns()
 
-            response = dynamoDB_put(data)
+            response = dynamoDB_put(WUNDERGROUND_DB_TABLE, data)
 
             print(
                 f"{dt.now().strftime(r'%Y/%m/%d %H:%M:%S')} - {station['id']} - Data retrieved and put in DB: Response code - {response['ResponseMetadata']['HTTPStatusCode']}"
             )
+
+            if station["put_in_short_db"]:
+                print(station["id"])
 
         else:
             print(

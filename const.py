@@ -8,6 +8,7 @@ GOOGLE_HEADER = {
 }
 
 WUNDERGROUND_DB_TABLE = "wunderground_pws"
+WUNDERGROUND_DB_SHORT_TABLE = "wunderground_pws_short"
 WUNDERGROUND_URL = "https://www.wunderground.com/dashboard/pws/"
 WUNDERGROUND_HEADER = {
     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36",
