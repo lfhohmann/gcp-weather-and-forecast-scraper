@@ -65,7 +65,7 @@ if __name__ == "__main__":
             data["station_id"] = station["id"]
             data["timestamp"] = time.time_ns()
 
-            response = dynamoDB_put(WUNDERGROUND_DB_TABLE, data)
+            response = dynamoDB_put(WUNDERGROUND_DB_TABLE, data.copy())
 
             print(
                 f"{dt.now().strftime(r'%Y/%m/%d %H:%M:%S')} - {station['id']} - Data retrieved and put in DB: Response code - {response['ResponseMetadata']['HTTPStatusCode']}"
@@ -74,7 +74,7 @@ if __name__ == "__main__":
             if station["put_in_short_db"]:
                 data["expiration_timestamp"] = round(time.time()) + (7 * 24 * 60 * 60)
 
-                response = dynamoDB_put(WUNDERGROUND_DB_SHORT_TABLE, data)
+                response = dynamoDB_put(WUNDERGROUND_DB_SHORT_TABLE, data.copy())
 
                 print(
                     f"{dt.now().strftime(r'%Y/%m/%d %H:%M:%S')} - {station['id']} - Data retrieved and put in SHORT DB: Response code - {response['ResponseMetadata']['HTTPStatusCode']}"
