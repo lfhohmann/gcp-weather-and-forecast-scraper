@@ -189,7 +189,7 @@ wunderground_stations:
       - wind_direction
       - precip_rate
       - precip_total
-    put_in_short_db: True
+    put_in_short_db: False
   - id: IPRCURIT8
     name: Curitiba Ahu - 931m
     coordinates:
